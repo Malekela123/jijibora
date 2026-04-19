@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "203062269918",
+    "project_id": "smartjiji-9d714",
+    "storage_bucket": "smartjiji-9d714.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203062269918:android:c5552a1339189f7e026f4f",
+        "android_client_info": {
+          "package_name": "com.malekela.smartjiji"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "203062269918-i57epu1ocpn0ja8c1iajhqvkuodc41tj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGSh7M5zb6TDtt-qJGMRPKqCjyg5mfNIg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "203062269918-i57epu1ocpn0ja8c1iajhqvkuodc41tj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
