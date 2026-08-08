@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ionicons/ionicons.dart';
 
-class FeedbackPage extends StatefulWidget {
-  const FeedbackPage({super.key});
+class MoreFeedback extends StatefulWidget {
+  const MoreFeedback({super.key});
 
   @override
-  State<FeedbackPage> createState() => _FeedbackPageState();
+  State<MoreFeedback> createState() => _MoreFeedbackState();
 }
 
-class _FeedbackPageState extends State<FeedbackPage> {
+class _MoreFeedbackState extends State<MoreFeedback> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

@@ -3,18 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ionicons/ionicons.dart';
 
-class UserInstruction extends StatefulWidget {
-  const UserInstruction({super.key});
+class MoreInstructions extends StatefulWidget {
+  const MoreInstructions({super.key});
 
   @override
-  State<UserInstruction> createState() => _UserInstructionState();
+  State<MoreInstructions> createState() => _MoreInstructionsState();
 }
 
-class _UserInstructionState extends State<UserInstruction> {
+class _MoreInstructionsState extends State<MoreInstructions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      appBar: AppBar(
+        title: const Text('Instructions'),
+      ),
+      body: const Center(
         child: Text('Instructions'),
       ),
     );

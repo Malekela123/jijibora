@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ionicons/ionicons.dart';
 
-class QRScan extends StatefulWidget {
-  const QRScan({super.key});
+class MoreQrScan extends StatefulWidget {
+  const MoreQrScan({super.key});
 
   @override
-  State<QRScan> createState() => _QRScanState();
+  State<MoreQrScan> createState() => _MoreQrScanState();
 }
 
-class _QRScanState extends State<QRScan> {
+class _MoreQrScanState extends State<MoreQrScan> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text('QR Scanner'),
       ),

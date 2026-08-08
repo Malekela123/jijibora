@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ionicons/ionicons.dart';
 
-class CollectedPlaces extends StatefulWidget {
-  const CollectedPlaces({super.key});
+class MoreCollectedPlaces extends StatefulWidget {
+  const MoreCollectedPlaces({super.key});
 
   @override
-  State<CollectedPlaces> createState() => _CollectedPlacesState();
+  State<MoreCollectedPlaces> createState() => _MoreCollectedPlacesState();
 }
 
-class _CollectedPlacesState extends State<CollectedPlaces> {
+class _MoreCollectedPlacesState extends State<MoreCollectedPlaces> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text('Collected Places'),
       ),

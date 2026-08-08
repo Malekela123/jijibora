@@ -1,6 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'register.dart';
+
+// Hakikisha njia (paths) ziko hivi:
+import 'register.dart';            
+import 'user/userhome.dart';        
+import 'admin/adminhome.dart';      
+import '../collector/collectorhome.dart'; 
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,17 +16,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  bool _hidePassword = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  // --- LOGIC YA LOGIN ---
-  Future<void> signIn() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+  Future<void> _handleLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Tafadhali jaza email na password")),
+        const SnackBar(content: Text("Tafadhali jaza nafasi zote!")),
       );
       return;
     }
@@ -30,31 +33,76 @@ class _LoginState extends State<Login> {
     });
 
     try {
-      // 1. Unajaribu ku-login. Firebase ikikubali, authStateChanges itatuma signal
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+      // 1. Kuingia kwenye Firebase Auth
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
 
-      // 2. Hatutumii Navigator hapa. Wrapper yako ndiyo itashughulikia kuelekeza (directing)
-      if (mounted) {
+      // 2. Kuvuta data za mtumiaji kutoka Firestore kwa kutumia UID yake
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      // === ULINZI WA KWANZA: Hakikisha widget bado ipo kwenye kioo ===
+      if (!mounted) return;
+
+      if (userDoc.exists) {
+        // Kupata role kutoka kwenye database
+        String role = userDoc.get('role') ?? 'user';
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(backgroundColor: Colors.green, content: Text("Karibu tena!")),
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text("Umeingia kama ${role.toUpperCase()}"),
+          ),
+        );
+
+        // 3. Kuchambua wapi pa kumpeleka mtumiaji kulingana na jukumu lake
+        if (role == 'admin') {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminHome()),
+            (route) => false,
+          );
+        } else if (role == 'collector') {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const Scaffold(body: Center(child: Text("Collector Home Screen")))),
+            (route) => false,
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const UserHome()),
+            (route) => false,
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Taarifa za mtumiaji hazikupatikana kwenye database.")),
         );
       }
+
     } on FirebaseAuthException catch (e) {
-      String errorMessage = "Hitilafu imetokea";
+      // === ULINZI WA PILI: Kwenye makosa ya Auth ===
+      if (!mounted) return;
+
+      String message = "Hitilafu imetokea wakati wa kuingia";
       if (e.code == 'user-not-found') {
-        errorMessage = "Mtumiaji hapatikani.";
+        message = "Hakuna mtumiaji mwenye email hii.";
       } else if (e.code == 'wrong-password') {
-        errorMessage = "Password siyo sahihi.";
+        message = "Neno la siri si sahihi.";
       } else if (e.code == 'invalid-email') {
-        errorMessage = "Email haina muundo sahihi.";
+        message = "Mfumo wa Email si sahihi.";
       }
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: Colors.red, content: Text(errorMessage)),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      // === ULINZI WA TATU: Kwenye makosa mengine yote ===
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) {
         setState(() {
@@ -62,6 +110,13 @@ class _LoginState extends State<Login> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -76,53 +131,50 @@ class _LoginState extends State<Login> {
             children: [
               const Text(
                 "Login",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 56),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48, color: Colors.black87),
               ),
-              Image.asset(
-                'assets/imges/login.png',
-                height: 300,
-              ),
+              const SizedBox(height: 10),
+              Image.asset('assets/imges/login.png', height: 200, errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.lock_person, size: 100, color: Colors.green);
+              }),
               const SizedBox(height: 20),
               Container(
                 constraints: const BoxConstraints(maxWidth: 400),
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(25.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
-                    BoxShadow(color: Colors.black12, blurRadius: 10, offset: const Offset(0, 5)),
+                    BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5)),
                   ],
                 ),
                 child: Column(
                   children: [
                     TextField(
-                      controller: emailController,
+                      controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email_outlined),
+                      decoration: InputDecoration(
+                        labelText: "Email Address",
+                        prefixIcon: const Icon(Icons.email_outlined),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
                     const SizedBox(height: 15),
                     TextField(
-                      controller: passwordController,
-                      obscureText: _hidePassword,
+                      controller: _passwordController,
+                      obscureText: true,
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: "Password",
                         prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(_hidePassword ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setState(() => _hidePassword = !_hidePassword),
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    
+                    const SizedBox(height: 25),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : signIn,
+                        onPressed: _isLoading ? null : _handleLogin,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF4CAF50),
                           foregroundColor: Colors.white,
@@ -133,16 +185,18 @@ class _LoginState extends State<Login> {
                           : const Text("LOGIN", style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    
-                    const SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Register()),
-                        );
-                      },
-                      child: const Text("Not a user? Register here"),
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("New here?"),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const Register()));
+                          },
+                          child: const Text("Register here", style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -152,12 +206,5 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 }

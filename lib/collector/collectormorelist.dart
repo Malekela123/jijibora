@@ -16,7 +16,6 @@ import 'package:eco_clean_mobile_app/user/usermorepagenav/moreqrscan.dart';
 import 'package:eco_clean_mobile_app/user/usershopping.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:ionicons/ionicons.dart';
 
 class CollectorMoreList extends StatefulWidget {
@@ -29,7 +28,7 @@ class CollectorMoreList extends StatefulWidget {
 class _CollectorMoreListState extends State<CollectorMoreList> {
   final user = FirebaseAuth.instance.currentUser;
 
-  signout() async {
+  Future<void> signout() async {
     await FirebaseAuth.instance.signOut();
   }
 
@@ -38,7 +37,9 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: const Icon(Ionicons.chevron_back_outline),
         ),
         leadingWidth: 60,
@@ -61,7 +62,7 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: Row(
                   children: [
@@ -73,29 +74,28 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${user!.email}',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500,
-                            )),
+                        Text(
+                          user?.email ?? 'Collector',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                         const SizedBox(height: 10),
-                        const Text("User",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF418E3C),
-                              fontWeight: FontWeight.w500,
-                            )),
+                        const Text(
+                          "Collector",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF418E3C),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ],
                     ),
                     const Spacer(),
-                    // ForwardButton(
-                    //   onTap: () {
-                    //     Navigator.push(context, MaterialPageRoute(builder: (context) => const EditAccountSetting(),
-                    //     ));
-                    //   },
-                    // ),
                   ],
-                ),),
+                ),
+              ),
               const SizedBox(height: 30),
               const Text(
                 "More",
@@ -109,8 +109,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Account",
                 img: "assets/imges/user.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const EditAccountSetting(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const EditAccountSetting()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -118,8 +120,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Map",
                 img: "assets/imges/location.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserLocation(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const UserLocation()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -127,8 +131,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Eco Edu",
                 img: "assets/imges/ecoedu.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MoreEcoEdu(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const MoreEcoEdu()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -136,8 +142,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Instructions",
                 img: "assets/imges/instruction.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserInstruction(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreInstructions()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -145,8 +153,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "QR Scan",
                 img: "assets/imges/qrscan.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const QRScan(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreQrScan()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -154,8 +164,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Bin Status",
                 img: "assets/imges/binstatus.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserBinStatus(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreBinStat()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -163,8 +175,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Categories",
                 img: "assets/imges/garbagecat.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserCategories(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const UserCategories()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -172,8 +186,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Nearest Bin",
                 img: "assets/imges/nearest bin.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const NearestBinTrack(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreNearestBin()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -181,8 +197,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Buy Items",
                 img: "assets/imges/buy.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserShopping(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const UserShopping()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -190,8 +208,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Chat",
                 img: "assets/imges/chat.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserChat(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreChat()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -199,8 +219,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Feedback",
                 img: "assets/imges/feedback.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const FeedbackPage(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreFeedback()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -208,8 +230,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Issue Report",
                 img: "assets/imges/issue.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const IssueReport(),
-                  ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreIssueReport()),
+                  );
                 },
               ),
               const SizedBox(height: 10),
@@ -217,17 +241,10 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
                 title: "Collected Places",
                 img: "assets/imges/collectbins.png",
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CollectedPlaces(),
-                  ));
-                },
-              ),
-              const SizedBox(height: 10),
-              SettingDetails(
-                title: "Temp",
-                img: "assets/imges/collectbins.png",
-                onTap: () {
-                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => const CollectedPlaces(),
-                  //   ));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MoreCollectedPlaces()),
+                  );
                 },
               ),
             ],
@@ -235,8 +252,9 @@ class _CollectorMoreListState extends State<CollectorMoreList> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (() => signout()),
-        child: const Icon(Icons.login_rounded),
+        onPressed: () => signout(),
+        backgroundColor: Colors.redAccent,
+        child: const Icon(Icons.logout_rounded, color: Colors.white),
       ),
     );
   }

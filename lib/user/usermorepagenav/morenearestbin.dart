@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:ionicons/ionicons.dart';
 
-class NearestBinTrack extends StatefulWidget {
-  const NearestBinTrack({super.key});
+class MoreNearestBin extends StatefulWidget {
+  const MoreNearestBin({super.key});
 
   @override
-  State<NearestBinTrack> createState() => _NearestBinTrackState();
+  State<MoreNearestBin> createState() => _MoreNearestBinState();
 }
 
-class _NearestBinTrackState extends State<NearestBinTrack> {
+class _MoreNearestBinState extends State<MoreNearestBin> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: Text('Nearest Bin Location'),
+        child: Text('Nearest Bin'),
       ),
     );
   }

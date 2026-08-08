@@ -11,14 +11,21 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final TextEditingController _nameController = TextEditingController();
+  // Imetofautishwa hapa kutumia phone badala ya name kulingana na muundo wako wa database
+  final TextEditingController _phoneController = TextEditingController(); 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   
+  // Jukumu la mwanzo (Default Role)
+  String _selectedRole = 'user'; 
+
+  // Orodha ya majukumu yanayopatikana kwenye mfumo wako
+  final List<String> _roles = ['user', 'collector', 'admin'];
+
   bool _isLoading = false;
 
   Future<void> _handleRegister() async {
-    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
+    if (_phoneController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Tafadhali jaza nafasi zote!")),
       );
@@ -36,18 +43,18 @@ class _RegisterState extends State<Register> {
         password: _passwordController.text.trim(),
       );
 
-      // 2. Kusave data Firestore pamoja na ROLE
+      // 2. Kusave data Firestore pamoja na jukumu lililochaguliwa na namba ya simu
       await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
-        'fullName': _nameController.text.trim(),
+        'phone': _phoneController.text.trim(), // Inahifadhiwa kama 'phone'
         'email': _emailController.text.trim(),
-        'role': 'user', // <--- ROLE IMEONGEZWA HAPA
+        'role': _selectedRole, // Inahifadhi 'user', 'collector', au 'admin' dynamically
         'createdAt': FieldValue.serverTimestamp(),
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(backgroundColor: Colors.green, content: Text("Usajili umefanikiwa! Ingia sasa.")),
+          SnackBar(backgroundColor: Colors.green, content: Text("Usajili wa $_selectedRole umefanikiwa! Ingia sasa.")),
         );
         
         Navigator.pushAndRemoveUntil(
@@ -77,6 +84,14 @@ class _RegisterState extends State<Register> {
   }
 
   @override
+  void dispose() {
+    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFC4E8C2),
@@ -91,7 +106,7 @@ class _RegisterState extends State<Register> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48, color: Colors.black87),
               ),
               const SizedBox(height: 10),
-              Image.asset('assets/imges/login.png', height: 250),
+              Image.asset('assets/imges/login.png', height: 200),
               const SizedBox(height: 20),
               Container(
                 constraints: const BoxConstraints(maxWidth: 400),
@@ -104,16 +119,56 @@ class _RegisterState extends State<Register> {
                   ],
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Sehemu ya kuchagua Jukumu (Role Dropdown)
+                    const Text(
+                      "Sajili kama:",
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedRole,
+                          isExpanded: true,
+                          items: _roles.map((String role) {
+                            return DropdownMenuItem<String>(
+                              value: role,
+                              child: Text(
+                                role == 'user' ? 'Mwananchi (User)' : role == 'collector' ? 'Mkusanyaji (Collector)' : 'Msimamizi (Admin)',
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedRole = newValue!;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    
+                    // Phone Input
                     TextField(
-                      controller: _nameController,
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
-                        labelText: "Full Name",
-                        prefixIcon: const Icon(Icons.person_outline),
+                        labelText: "Phone Number",
+                        prefixIcon: const Icon(Icons.phone_outlined),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
                     const SizedBox(height: 15),
+                    
+                    // Email Input
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -124,6 +179,8 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     const SizedBox(height: 15),
+                    
+                    // Password Input
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
@@ -134,6 +191,8 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     const SizedBox(height: 25),
+                    
+                    // Button
                     SizedBox(
                       width: double.infinity,
                       height: 50,
